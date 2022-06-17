@@ -13,3 +13,20 @@
   color: #2c3e50;
 }
 </style>
+
+<script>
+export default {
+  name: "App",
+  mounted(){
+    let keranjang = localStorage.getItem("keranjang");
+    if (keranjang){
+      try{
+        this.$store.dispatch('getKeranjang', JSON.parse(keranjang));
+      }
+      catch(e){
+        localStorage.removeItem("keranjang");
+      }
+    }
+  }
+}
+</script>

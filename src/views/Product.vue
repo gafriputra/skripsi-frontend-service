@@ -29,7 +29,7 @@
                 <div class="product-pic-zoom">
                   <img class="product-big-img" :src="gambar_utama" alt />
                 </div>
-                <div class="product-thumbs" v-if="productDetails.galleries.length > 0">
+                <div class="product-thumbs" v-if="galleries.length > 0">
                   <carousel
                     class="product-thumbs-track ps-slider"
                     :items="3"
@@ -39,7 +39,7 @@
                     :loop="true"
                   >
                     <div
-                      v-for="image in productDetails.galleries"
+                      v-for="image in galleries"
                       :key="image.id"
                       class="pt"
                       @click="changeImage(image.image)"
@@ -58,7 +58,7 @@
                   </div>
                   <div class="pd-desc">
                     <p v-html="productDetails.description"></p>
-                    <h4>Rp. {{productDetails.price}}</h4>
+                    <h4>{{$rupiah(productDetails.price)}}</h4>
                   </div>
                   <div class="quantity">
                     <a
@@ -102,7 +102,8 @@ export default {
     return {
       gambar_utama: "",
       productDetails: [],
-      keranjangUser: []
+      keranjangUser: [],
+      galleries : []
     };
   },
   methods: {
@@ -114,35 +115,26 @@ export default {
       this.productDetails = data;
       //replace value gambar detail dengan dara dari API (galleries)
       this.gambar_utama = data.galleries[0].image;
+      this.galleries = data.galleries;
     },
     saveKeranjang(productDetails) {
-       for (const [key, value] of Object.entries(this.keranjangUser)) {
-        if (value.id == productDetails.id) {
-          return key;
-        }
-      }
       let memoriProduk = {
         id: productDetails.id,
         name: productDetails.name,
         price: productDetails.price,
         // image: ''
-        image: productDetails.galleries[0].image
+        image: productDetails.galleries[0].image,
+        qty: 1
       };
-      this.keranjangUser.push(memoriProduk);
-      // dataKucing diserialisasi menjadi string JSON
-      const parsed = JSON.stringify(this.keranjangUser);
-      localStorage.setItem("keranjangUser", parsed);
-      // window.location.reload();
+      this.$store.dispatch('addKeranjang', memoriProduk);
+      this.$swal.fire({
+        icon: 'success',
+        title: memoriProduk.name,
+        text: 'Berhasil Masuk Keranjang'
+      })
     }
   },
   mounted() {
-    if (localStorage.getItem("keranjangUser")) {
-      try {
-        this.keranjangUser = JSON.parse(localStorage.getItem("keranjangUser"));
-      } catch (e) {
-        localStorage.removeItem("keranjangUser");
-      }
-    }
     axios
       .get("http://s-laravel.test/api/products", {
         params: {

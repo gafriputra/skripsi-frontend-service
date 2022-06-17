@@ -36,17 +36,17 @@
                         <th>Action</th>
                       </tr>
                     </thead>
-                    <tbody v-if="keranjangUser.length > 0">
-                      <tr v-for="keranjang in keranjangUser" :key="keranjang.id">
+                    <tbody v-if="keranjang.length > 0">
+                      <tr v-for="item in keranjang" :key="item.id">
                         <td class="cart-pic first-row">
-                          <img class="img-cart" :src="keranjang.image" />
+                          <img class="img-cart" :src="item.image" />
                         </td>
                         <td class="cart-title first-row text-center">
-                          <h5>{{keranjang.name}}</h5>
+                          <h5>{{item.name}}</h5>
                         </td>
-                        <td class="p-price first-row">Rp. {{keranjang.price}}</td>
+                        <td class="p-price first-row">{{$rupiah(item.price*item.qty)}}</td>
                         <td class="delete-item">
-                          <a href="#" @click="removeItem(keranjang.index)">
+                          <a @click="removeItem(item.id)">
                             <i class="material-icons">close</i>
                           </a>
                         </td>
@@ -60,7 +60,7 @@
                   </table>
                 </div>
               </div>
-              <div class="col-lg-8 text-left" v-if="keranjangUser.length > 0">
+              <div class="col-lg-8 text-left" v-if="keranjang.length > 0">
                 <h4 class="mb-4">Informasi Pembeli:</h4>
                 <div class="user-checkout">
                   <form>
@@ -111,7 +111,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-4" v-if="keranjangUser.length > 0">
+          <div class="col-lg-4" v-if="keranjang.length > 0">
             <div class="row">
               <div class="col-lg-12">
                 <div class="proceed-checkout text-left">
@@ -122,7 +122,7 @@
                     </li>
                     <li class="subtotal mt-3">
                       Subtotal
-                      <span>Rp. {{totalHarga}}</span>
+                      <span>{{$rupiah(totalHarga)}}</span>
                     </li>
                     <li class="subtotal mt-3">
                       Pajak
@@ -130,7 +130,7 @@
                     </li>
                     <li class="subtotal mt-3">
                       Total Biaya
-                      <span>Rp. {{totalHargaPajak}}</span>
+                      <span>{{$rupiah(totalHargaPajak)}}</span>
                     </li>
                     <li class="subtotal mt-3">
                       Bank Transfer
@@ -160,6 +160,7 @@
 <script>
 import HeaderMitrabakti from "@/components/HeaderMitrabakti.vue";
 import Axios from "axios";
+import {mapState} from "vuex";
 
 export default {
   name: "Cart",
@@ -168,7 +169,6 @@ export default {
   },
   data() {
     return {
-      keranjangUser: [],
       customerInfo: {
         name: "",
         email: "",
@@ -178,13 +178,11 @@ export default {
     };
   },
   methods: {
-    removeItem(listProduk) {
-      this.keranjangUser.splice(listProduk, 1);
-      const parsed = JSON.stringify(this.keranjangUser);
-      localStorage.setItem("keranjangUser", parsed);
+    removeItem(id) {
+      this.$store.dispatch('deleteItem', id);
     },
     checkout() {
-      let products = this.keranjangUser.map(function(product) {
+      let products = this.keranjang.map(function(product) {
         return product.id;
       });
 
@@ -203,18 +201,10 @@ export default {
         .catch(err => console.log(err));
     }
   },
-  mounted() {
-    if (localStorage.getItem("keranjangUser")) {
-      try {
-        this.keranjangUser = JSON.parse(localStorage.getItem("keranjangUser"));
-      } catch (e) {
-        localStorage.removeItem("keranjangUser");
-      }
-    }
-  },
   computed: {
+    ...mapState(['keranjang']),
     totalHarga() {
-      return this.keranjangUser.reduce(function(items, data) {
+      return this.keranjang.reduce(function(items, data) {
         return items + data.price;
       }, 0);
     },

@@ -30,23 +30,23 @@
                 Keranjang Belanja &nbsp;
                 <a href="#">
                   <i class="icon_bag_alt"></i>
-                  <span>{{keranjangUser.length}}</span>
+                  <span>{{keranjang.length}}</span>
                 </a>
                 <div class="cart-hover">
                   <div class="select-items">
                     <table>
-                      <tbody v-if="keranjangUser.length > 0">
-                        <tr v-for="keranjang in keranjangUser" :key="keranjang.id">
+                      <tbody v-if="keranjang.length > 0">
+                        <tr v-for="item in keranjang" :key="item.id">
                           <td class="si-pic">
-                            <img :src="keranjang.image" class="photo-item" />
+                            <img :src="item.image" class="photo-item" />
                           </td>
                           <td class="si-text">
                             <div class="product-selected">
-                              <p>Rp. {{keranjang.price}} x {{keranjang.id}} - {{keranjang.index}}</p>
-                              <h6>{{keranjang.name}}</h6>
+                              <p>{{$rupiah(item.price * item.qty)}}</p>
+                              <h6>{{item.name}}</h6>
                             </div>
                           </td>
-                          <td @click="removeItem(keranjang.id)" class="si-close">
+                          <td @click="removeItem(item.id)" class="si-close">
                             <i class="ti-close"></i>
                           </td>
                         </tr>
@@ -60,11 +60,11 @@
                   </div>
                   <div class="select-total">
                     <span>total:</span>
-                    <h5>Rp {{totalHarga}}</h5>
+                    <h5>{{$rupiah(totalHarga)}}</h5>
                   </div>
                   <div class="select-button">
                     <router-link to="/cart" class="primary-btn view-card">VIEW CARD</router-link>
-                    <router-link to="/" class="primary-btn checkout-btn">CHECK OUT</router-link>
+                    <router-link to="/cart" class="primary-btn checkout-btn">CHECK OUT</router-link>
                   </div>
                 </div>
               </li>
@@ -78,42 +78,18 @@
 </template>
 
 <script>
+import {mapState} from "vuex";
 export default {
   name: "HeaderMitrabakti",
-  data() {
-    return {
-      keranjangUser: []
-    };
-  },
   methods: {
-    removeItem(xx) {
-      // this.keranjangUser.splice(index, 1);
-      // const parsed = JSON.stringify(this.keranjangUser);
-      // localStorage.setItem("keranjangUser", parsed);
-      // window.location.reload();
-      let faveGifs = JSON.parse(localStorage.getItem("keranjangUser"));
-      let faveGif = faveGifs.map(faveGif => faveGif.id);
-      let index = faveGif.findIndex(id => id == xx);
-      this.keranjangUser.splice(index, 1);
-      const parsed = JSON.stringify(this.keranjangUser);
-      localStorage.setItem("keranjangUser", parsed);
-      // window.location.reload();
-      // eslint-disable-next-line no-console
-      console.log(index);
-    }
-  },
-  mounted() {
-    if (localStorage.getItem("keranjangUser")) {
-      try {
-        this.keranjangUser = JSON.parse(localStorage.getItem("keranjangUser"));
-      } catch (e) {
-        localStorage.removeItem("keranjangUser");
-      }
+    removeItem(id) {
+        this.$store.dispatch('deleteItem', id);
     }
   },
   computed: {
+    ...mapState(['keranjang']),
     totalHarga() {
-      return this.keranjangUser.reduce(function(items, data) {
+      return this.keranjang.reduce(function(items, data) {
         return items + data.price;
       }, 0);
     }

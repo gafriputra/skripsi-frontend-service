@@ -17,7 +17,7 @@
                 <img v-bind:src="itemProduct.galleries.length ? itemProduct.galleries[0].image : ''" alt />
                 <ul>
                   <li class="w-icon active">
-                    <a href="#" @click="saveKeranjang(itemProduct)">
+                    <a @click="saveKeranjang(itemProduct)">
                       <i class="icon_bag_alt"></i>
                     </a>
                   </li>
@@ -32,7 +32,7 @@
                   <h5>{{itemProduct.name}}</h5>
                 </router-link>
                 <div class="product-price">
-                  {{itemProduct.price}}
+                  {{$rupiah(itemProduct.price)}}
                   <span>$35.00</span>
                 </div>
               </div>
@@ -51,6 +51,7 @@
 <script>
 // import banner slider owl carousel
 import carousel from "vue-owl-carousel";
+import { mapActions } from "vuex";
 // import axios
 import axios from "axios";
 export default {
@@ -60,41 +61,31 @@ export default {
   },
   data() {
     return {
-      products: [],
-      keranjangUser: []
+      products: []
     };
   },
   methods: {
+    ...mapActions(["addKeranjang"]),
     saveKeranjang(productDetails) {
-       for (const [key, value] of Object.entries(this.keranjangUser)) {
-        if (value.id == productDetails.id) {
-          return key;
-        }
-      }
       let memoriProduk = {
         id: productDetails.id,
         name: productDetails.name,
         price: productDetails.price,
         // image: ''
-        image: productDetails.galleries[0].image
+        image: productDetails.galleries[0].image,
+        qty: 1
       };
-      this.keranjangUser.push(memoriProduk);
-      // dataKucing diserialisasi menjadi string JSON
-      const parsed = JSON.stringify(this.keranjangUser);
-      localStorage.setItem("keranjangUser", parsed);
-      // window.location.reload();
+      this.$store.dispatch('addKeranjang', memoriProduk);
+      this.$swal.fire({
+        icon: 'success',
+        title: memoriProduk.name,
+        text: 'Berhasil Masuk Keranjang'
+      })
     }
   },
   mounted() {
-    if (localStorage.getItem("keranjangUser")) {
-      try {
-        this.keranjangUser = JSON.parse(localStorage.getItem("keranjangUser"));
-      } catch (e) {
-        localStorage.removeItem("keranjangUser");
-      }
-    }
     axios
-      .get("http://s-laravel.test/api/products")
+      .get(this.$hostname)
       .then(result => (this.products = result.data.data.data))
       .catch(err => console.log(err));
   }
