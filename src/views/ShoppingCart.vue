@@ -184,7 +184,7 @@ export default {
       localStorage.setItem("keranjangUser", parsed);
     },
     checkout() {
-      let productId = this.keranjangUser.map(function(product) {
+      let products = this.keranjangUser.map(function(product) {
         return product.id;
       });
 
@@ -194,8 +194,8 @@ export default {
         phone: this.customerInfo.phone,
         address: this.customerInfo.address,
         transaction_total: this.totalHargaPajak,
-        transaction_status: "PENDING",
-        transaction_details: productId
+        status: "PENDING",
+        transaction_details: products
       };
       Axios.post("http://s-laravel.test/api/checkout", checkoutData)
         .then(() => this.$router.push("success"))

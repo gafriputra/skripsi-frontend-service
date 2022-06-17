@@ -14,7 +14,7 @@
           >
             <div class="product-item" v-for="itemProduct in products" v-bind:key="itemProduct.id">
               <div class="pi-pic">
-                <img v-bind:src="itemProduct.product_galleries.length ? itemProduct.product_galleries[0].image : ''" alt />
+                <img v-bind:src="itemProduct.galleries.length ? itemProduct.galleries[0].image : ''" alt />
                 <ul>
                   <li class="w-icon active">
                     <a href="#" @click="saveKeranjang(itemProduct)">
@@ -66,18 +66,23 @@ export default {
   },
   methods: {
     saveKeranjang(productDetails) {
+       for (const [key, value] of Object.entries(this.keranjangUser)) {
+        if (value.id == productDetails.id) {
+          return key;
+        }
+      }
       let memoriProduk = {
         id: productDetails.id,
         name: productDetails.name,
         price: productDetails.price,
-        image: ''
-        // image: productDetails.product_galleries[0].image
+        // image: ''
+        image: productDetails.galleries[0].image
       };
       this.keranjangUser.push(memoriProduk);
       // dataKucing diserialisasi menjadi string JSON
       const parsed = JSON.stringify(this.keranjangUser);
       localStorage.setItem("keranjangUser", parsed);
-      window.location.reload();
+      // window.location.reload();
     }
   },
   mounted() {

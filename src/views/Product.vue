@@ -29,7 +29,7 @@
                 <div class="product-pic-zoom">
                   <img class="product-big-img" :src="gambar_utama" alt />
                 </div>
-                <div class="product-thumbs" v-if="productDetails.product_galleries.length > 0">
+                <div class="product-thumbs" v-if="productDetails.galleries.length > 0">
                   <carousel
                     class="product-thumbs-track ps-slider"
                     :items="3"
@@ -39,7 +39,7 @@
                     :loop="true"
                   >
                     <div
-                      v-for="image in productDetails.product_galleries"
+                      v-for="image in productDetails.galleries"
                       :key="image.id"
                       class="pt"
                       @click="changeImage(image.image)"
@@ -112,20 +112,27 @@ export default {
     setDataPicture(data) {
       // replace data product dengan API
       this.productDetails = data;
-      //replace value gambar detail dengan dara dari API (product_galleries)
-      this.gambar_utama = data.product_galleries[0].image;
+      //replace value gambar detail dengan dara dari API (galleries)
+      this.gambar_utama = data.galleries[0].image;
     },
     saveKeranjang(productDetails) {
+       for (const [key, value] of Object.entries(this.keranjangUser)) {
+        if (value.id == productDetails.id) {
+          return key;
+        }
+      }
       let memoriProduk = {
         id: productDetails.id,
         name: productDetails.name,
         price: productDetails.price,
-        image: productDetails.product_galleries[0].image
+        // image: ''
+        image: productDetails.galleries[0].image
       };
       this.keranjangUser.push(memoriProduk);
       // dataKucing diserialisasi menjadi string JSON
       const parsed = JSON.stringify(this.keranjangUser);
       localStorage.setItem("keranjangUser", parsed);
+      // window.location.reload();
     }
   },
   mounted() {
