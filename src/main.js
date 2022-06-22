@@ -11,7 +11,7 @@ Vue.use(VueSweetalert2)
 const store = new Vuex.Store(storeData)
 
 Vue.config.productionTip = false
-Vue.prototype.$hostname = "http://s-laravel.test/api/products";
+Vue.prototype.$hostname = "http://s-laravel.test";
 Vue.prototype.$rupiah = (value) => {return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(value);}
 
 new Vue({

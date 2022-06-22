@@ -136,7 +136,7 @@ export default {
   },
   mounted() {
     axios
-      .get("http://s-laravel.test/api/products", {
+      .get(this.$hostname.`/api/products`, {
         params: {
           slug: this.$route.params.slug
         }

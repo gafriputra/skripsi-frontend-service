@@ -85,7 +85,7 @@ export default {
   },
   mounted() {
     axios
-      .get(this.$hostname)
+      .get(this.$hostname.`/api/products`)
       .then(result => (this.products = result.data.data.data))
       .catch(err => console.log(err));
   }
