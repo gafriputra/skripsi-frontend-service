@@ -44,7 +44,7 @@
                         <td class="cart-title first-row text-center">
                           <h5>{{item.name}}</h5>
                         </td>
-                        <td class="p-price first-row">{{$rupiah(item.price*item.qty)}}</td>
+                        <td class="p-price first-row">{{$rupiah(item.price*item.qty)}} ({{item.qty}} pcs)</td>
                         <td class="delete-item">
                           <a @click="removeItem(item.id)">
                             <i class="material-icons">close</i>
@@ -117,10 +117,6 @@
                 <div class="proceed-checkout text-left">
                   <ul>
                     <li class="subtotal">
-                      ID Transaction
-                      <span>#SH12000</span>
-                    </li>
-                    <li class="subtotal mt-3">
                       Subtotal
                       <span>{{$rupiah(totalHarga)}}</span>
                     </li>
@@ -182,11 +178,14 @@ export default {
       this.$store.dispatch('deleteItem', id);
     },
     checkout() {
-      let products = this.keranjang.map(function(product) {
-        return product.id;
+      const products = this.keranjang.map(function(product) {
+        return {
+          'product_id' : product.id,
+          'qty' : product.qty
+        }
       });
 
-      let checkoutData = {
+      const checkoutData = {
         name: this.customerInfo.name,
         email: this.customerInfo.email,
         phone: this.customerInfo.phone,
