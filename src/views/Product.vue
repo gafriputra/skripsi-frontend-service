@@ -136,7 +136,7 @@ export default {
   },
   mounted() {
     axios
-      .get(this.$hostname.`/api/products`, {
+      .get(`${this.$hostname}/api/products`, {
         params: {
           slug: this.$route.params.slug
         }

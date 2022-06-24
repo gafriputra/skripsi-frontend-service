@@ -195,7 +195,7 @@ export default {
         status: "PENDING",
         transaction_details: products
       };
-      Axios.post(this.$hostname.`/api/checkout`, checkoutData)
+      Axios.post(`${this.$hostname}/api/checkout`, checkoutData)
         .then(() => this.$router.push("success"))
         // eslint-disable-next-line no-console
         .catch(err => console.log(err));
