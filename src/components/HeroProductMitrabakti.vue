@@ -14,7 +14,7 @@
           >
             <div class="product-item" v-for="itemProduct in products" v-bind:key="itemProduct.id">
               <div class="pi-pic">
-                <img v-bind:src="itemProduct.galleries.length ? itemProduct.galleries[0].image : ''" alt />
+                <img v-bind:src="itemProduct.galleries.length ? itemProduct.galleries[0].image_url : ''" alt />
                 <ul>
                   <li class="w-icon active">
                     <a @click="saveKeranjang(itemProduct)">
@@ -85,8 +85,8 @@ export default {
   },
   mounted() {
     axios
-      .get(`${this.$hostname}/api/products`)
-      .then(result => (this.products = result.data.data.data))
+      .get(`${this.$hostname}/products/`)
+      .then(result => (this.products = result.data.data))
       .catch(err => console.log(err));
   }
 };

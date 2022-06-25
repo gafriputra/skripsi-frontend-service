@@ -181,7 +181,8 @@ export default {
       const products = this.keranjang.map(function(product) {
         return {
           'product_id' : product.id,
-          'qty' : product.qty
+          'qty' : product.qty,
+          'price' : product.price * product.qty
         }
       });
 
@@ -192,10 +193,10 @@ export default {
         address: this.customerInfo.address,
         transaction_total: this.totalHargaPajak,
         status: "PENDING",
-        transaction_details: products
+        details: products
       };
-      Axios.post(`${this.$hostname}/api/checkout`, checkoutData)
-        .then(() => this.$router.push("success"))
+      Axios.post(`${this.$hostname}/transaction`, checkoutData)
+        .then((response) => window.location.replace(response.data.data.payment_url))
         // eslint-disable-next-line no-console
         .catch(err => console.log(err));
     }

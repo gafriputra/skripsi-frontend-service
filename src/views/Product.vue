@@ -42,10 +42,10 @@
                       v-for="image in galleries"
                       :key="image.id"
                       class="pt"
-                      @click="changeImage(image.image)"
-                      :class="image.image == gambar_utama ? 'active' : false"
+                      @click="changeImage(image.image_url)"
+                      :class="image.image_url == gambar_utama ? 'active' : false"
                     >
-                      <img :src="image.image" alt />
+                      <img :src="image.image_url" alt />
                     </div>
                   </carousel>
                 </div>
@@ -114,7 +114,7 @@ export default {
       // replace data product dengan API
       this.productDetails = data;
       //replace value gambar detail dengan dara dari API (galleries)
-      this.gambar_utama = data.galleries[0].image;
+      this.gambar_utama = data.galleries[0].image_url;
       this.galleries = data.galleries;
     },
     saveKeranjang(productDetails) {
@@ -123,7 +123,7 @@ export default {
         name: productDetails.name,
         price: productDetails.price,
         // image: ''
-        image: productDetails.galleries[0].image,
+        image: productDetails.galleries[0].image_url,
         qty: 1
       };
       this.$store.dispatch('addKeranjang', memoriProduk);
@@ -136,11 +136,7 @@ export default {
   },
   mounted() {
     axios
-      .get(`${this.$hostname}/api/products`, {
-        params: {
-          slug: this.$route.params.slug
-        }
-      })
+      .get(`${this.$hostname}/products/${this.$route.params.slug}`)
       .then(result => this.setDataPicture(result.data.data))
       // eslint-disable-text-line no-console;
       .catch(err => console.log(err));
