@@ -11,7 +11,7 @@ Vue.use(VueSweetalert2)
 const store = new Vuex.Store(storeData)
 
 Vue.config.productionTip = false
-Vue.prototype.$hostname = "http://103.172.205.242:8000";
+Vue.prototype.$hostname = "https://skripsi-api-microservice.gafri.site";
 Vue.prototype.$rupiah = (value) => {return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(value);}
 
 new Vue({
