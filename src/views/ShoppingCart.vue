@@ -195,10 +195,21 @@ export default {
         status: "PENDING",
         details: products
       };
-      Axios.post(`${this.$hostname}/transaction`, checkoutData)
-        .then((response) => window.location.replace(response.data.data.payment_url))
-        // eslint-disable-next-line no-console
-        .catch(err => console.log(err));
+      const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Content-type': 'application/json',
+        'Access-Control-Allow-Methods': '*'
+      }
+      Axios.get(`${this.$hostname}/transactions`)
+      .then(result => console.log(result));
+      Axios.post(`${this.$hostname}/transactions`, checkoutData, {
+        headers: headers
+      })
+      .then((response) => {
+        this.$store.dispatch('deleteAllItem');
+        window.location.replace(response.data.data.payment_url)
+      })
+      .catch(err => console.log(err));
     }
   },
   computed: {
